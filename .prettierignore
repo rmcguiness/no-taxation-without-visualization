@@ -1,0 +1,8 @@
+.next/
+node_modules/
+pnpm-lock.yaml
+data/
+next-env.d.ts
+
+# Prose stays hand-formatted (trailing-space line breaks are meaningful)
+*.md

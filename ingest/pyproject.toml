@@ -1,0 +1,19 @@
+[project]
+name = "ntwv-ingest"
+version = "0.1.0"
+description = "Data ingestion for No Taxation without Visualization: fetch raw government data, hash it, transform to tidy tables, load into Postgres."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["sources", "transforms"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

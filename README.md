@@ -30,11 +30,25 @@ A layered map of public money (revenue → sectors → place → entity) that re
 ## Status
 
 - [x] Product vision and specs
+- [x] Phase 0 bootstrap (Next.js + Tailwind app, Docker Postgres, ingest skeleton)
 - [ ] Phase 1 scaffold (app + federal budget ingest)
 - [ ] Phase 1 UI (revenue + outlays visualization)
 - [ ] Phase 2 place-based views
 - [ ] Phase 3 education deep-dive
 - [ ] Later: more verticals, red flags, civic calendar
+
+---
+
+## Local development
+
+```bash
+pnpm install        # install web dependencies
+pnpm dev            # serve the site at http://localhost:3000
+docker compose up   # start Postgres 16 (defaults in .env.example)
+```
+
+Optional: copy `.env.example` to `.env` to override Postgres credentials/port.
+The Python ingest package lives in [ingest/](./ingest/) (skeleton only until Phase 1).
 
 ---
 
