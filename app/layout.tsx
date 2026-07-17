@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/federal/revenue', label: 'Revenue' },
+  { href: '/federal/spending', label: 'Spending' },
   { href: '/about', label: 'About' },
   { href: '/methodology', label: 'Methodology' },
 ];
@@ -24,12 +26,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-ink/10">
           <nav
             aria-label="Main navigation"
-            className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4"
+            className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-4"
           >
             <Link href="/" className="font-semibold tracking-tight hover:text-accent">
               NTwV
             </Link>
-            <ul className="flex gap-6 text-sm">
+            <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
               {navLinks.map(({ href, label }) => (
                 <li key={href}>
                   <Link href={href} className="hover:text-accent hover:underline">

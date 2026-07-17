@@ -1,3 +1,7 @@
+# Re-include app source dirs that global gitignores commonly exclude
+!lib/
+!lib/**
+
 # Dependencies
 node_modules/
 .pnpm-store/

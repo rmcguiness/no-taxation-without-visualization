@@ -31,6 +31,17 @@ export default function AboutPage() {
         </li>
         <li>We are nonpartisan: no endorsements, no vote recommendations, no party coding.</li>
       </ul>
+      <p>
+        When something in the data looks odd, the strongest language we use is one of these labels —
+        never an accusation:
+      </p>
+      <p className="flex flex-wrap gap-2 text-sm">
+        {['Needs review', 'Unusual pattern', 'Data gap', 'Outlier vs peers'].map((label) => (
+          <span key={label} className="rounded-full border border-ink/20 px-3 py-1 text-ink/70">
+            {label}
+          </span>
+        ))}
+      </p>
       <p className="text-ink/70">
         This site is under active construction. The federal revenue and spending story arrives in
         Phase 1.

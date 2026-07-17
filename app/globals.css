@@ -11,3 +11,24 @@ body {
   background-color: var(--color-paper);
   color: var(--color-ink);
 }
+
+/* Data-viz roles (validated palette; see dataviz notes in docs/adr/0001).
+   Charts reference these vars only — never raw hex in components. */
+:root {
+  --viz-surface: #fcfcfb;
+  --viz-ink: #0b0b0b;
+  --viz-ink-secondary: #52514e;
+  --viz-muted: #898781;
+  --viz-grid: #e1e0d9;
+  --viz-baseline: #c3c2b7;
+  --viz-series-1: #2a78d6; /* blue */
+  --viz-series-2: #1baf7a; /* aqua */
+  --viz-series-3: #eda100; /* yellow */
+  --viz-series-4: #008300; /* green */
+  --viz-series-5: #4a3aa7; /* violet */
+  --viz-series-6: #e34948; /* red */
+  --viz-series-7: #e87ba4; /* magenta */
+  --viz-series-8: #eb6834; /* orange */
+  --viz-other: #898781; /* 'everything else' fold */
+  --viz-projection-wash: rgba(137, 135, 129, 0.1);
+}
