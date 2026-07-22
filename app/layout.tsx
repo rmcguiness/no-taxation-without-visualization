@@ -1,14 +1,44 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { BRAND, SITE_NAME, SITE_TAGLINE, siteUrl } from '@/lib/site';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: siteUrl(),
   title: {
-    default: 'No Taxation without Visualization',
-    template: '%s · No Taxation without Visualization',
+    default: SITE_NAME,
+    template: `%s · ${SITE_NAME}`,
   },
-  description:
-    'See where U.S. public money comes from, where it goes, and which government decides — with sources for every number.',
+  description: SITE_TAGLINE,
+  applicationName: SITE_NAME,
+  keywords: [
+    'federal budget',
+    'government spending',
+    'taxes',
+    'public finance',
+    'data visualization',
+    'U.S. revenue',
+    'OMB',
+  ],
+  authors: [{ name: SITE_NAME }],
+  openGraph: {
+    type: 'website',
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_TAGLINE,
+    url: '/',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_NAME,
+    description: SITE_TAGLINE,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: BRAND.paper,
+  colorScheme: 'light',
 };
 
 const navLinks = [
