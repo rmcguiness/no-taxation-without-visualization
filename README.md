@@ -52,6 +52,36 @@ The Python ingest package lives in [ingest/](./ingest/) (skeleton only until Pha
 
 ---
 
+## Deployment & CI/CD
+
+The site is hosted on **Vercel** and backed by a **Neon** serverless Postgres.
+Pages are `force-dynamic` and read from Postgres at request time via
+`DATABASE_URL` (injected by the Vercel–Neon integration).
+
+**Pipeline — nothing broken reaches production:**
+
+| Trigger | What runs |
+|---------|-----------|
+| Pull request → `main` | GitHub Actions CI (`.github/workflows/ci.yml`): Prettier, ESLint, `tsc`, Vitest, `next build`, plus Python ingest tests — **and** a Vercel Preview Deployment with its own URL |
+| Merge → `main` | GitHub Actions CI + a Vercel **Production** deployment |
+
+Branch protection on `main` requires the CI checks to pass before a PR can
+merge, so a red build blocks the deploy.
+
+**Seeding / refreshing the database** (run against the target `DATABASE_URL`):
+
+```bash
+cd ingest
+pip install -e '.[dev]'
+DATABASE_URL='postgres://…neon…/neondb?sslmode=require' ntwv-ingest run
+DATABASE_URL='postgres://…neon…/neondb?sslmode=require' ntwv-ingest status
+```
+
+The loader is idempotent: re-running the same data vintage converges to the
+same rows; a new vintage supersedes the old via the `fiscal_series_latest` view.
+
+---
+
 ## License / non-affiliation
 
 Not affiliated with any government agency. Uses public open data. See PRODUCT_SPEC for language about what the product can and cannot claim.
