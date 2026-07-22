@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "A layered map of U.S. public money — see where it comes from, where it goes, and who decides.",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
