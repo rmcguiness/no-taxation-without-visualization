@@ -7,8 +7,7 @@ export const contentType = 'image/png';
 
 /** Social share card: wordmark, title, tagline, and a bar-chart motif footer. */
 export default function OpengraphImage() {
-  // Heights echo a real part-to-whole spread, not decorative noise.
-  const bars = [72, 100, 58, 84, 40, 66, 30, 50];
+  // Text-only share card; no illustrative data.
 
   return new ImageResponse(
     <div
@@ -25,20 +24,6 @@ export default function OpengraphImage() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            gap: 5,
-            padding: 12,
-            background: BRAND.accent,
-            borderRadius: 12,
-          }}
-        >
-          <div style={{ width: 10, height: 16, background: BRAND.paper, borderRadius: 2 }} />
-          <div style={{ width: 10, height: 26, background: BRAND.paper, borderRadius: 2 }} />
-          <div style={{ width: 10, height: 36, background: BRAND.paper, borderRadius: 2 }} />
-        </div>
         <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -0.5 }}>NTwV</div>
       </div>
 
@@ -49,19 +34,16 @@ export default function OpengraphImage() {
         <div style={{ fontSize: 30, lineHeight: 1.35, color: '#52514e' }}>{SITE_TAGLINE}</div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, height: 110 }}>
-        {bars.map((h, i) => (
-          <div
-            key={i}
-            style={{
-              width: 108,
-              height: h,
-              background: i % 2 === 0 ? BRAND.accent : BRAND.accentDark,
-              borderRadius: '4px 4px 0 0',
-              opacity: 0.9,
-            }}
-          />
-        ))}
+      <div
+        style={{
+          display: 'flex',
+          borderTop: `2px solid ${BRAND.accent}`,
+          paddingTop: 24,
+          color: BRAND.accent,
+          fontSize: 24,
+        }}
+      >
+        The federal checkbook, made clear. · Public data. Open methods.
       </div>
     </div>,
     { ...size },

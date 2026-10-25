@@ -33,6 +33,7 @@ A layered map of public money (revenue → sectors → place → entity) that re
 - [x] Phase 0 bootstrap (Next.js + Tailwind app, Docker Postgres, ingest skeleton)
 - [x] Phase 1 data layer (OMB Tables 2.1 + 3.2 → validated `fiscal_series` in Postgres)
 - [x] Phase 1 UI (homepage dashboard, /federal/revenue, /federal/spending, /sectors/[slug])
+- [x] Design polish of the federal UI (light/dark themes, accessible navigation, reduced motion, loading states, and page metadata)
 - [ ] Phase 2 place-based views
 - [ ] Phase 3 education deep-dive
 - [ ] Later: more verticals, red flags, civic calendar

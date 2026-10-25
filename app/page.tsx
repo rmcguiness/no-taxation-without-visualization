@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/metadata';
 import Link from 'next/link';
 import CategoryBarChart from '@/components/charts/CategoryBarChart';
 import PartToWholeBar from '@/components/PartToWholeBar';
@@ -13,6 +14,12 @@ import {
 } from '@/lib/queries';
 import { sectorByCode, SECTORS } from '@/lib/sectors';
 import { RECEIPT_SERIES } from '@/lib/shape';
+
+export const metadata = pageMetadata(
+  'The federal checkbook, made clear',
+  'Explore federal revenue, spending, and sectors with OMB sources for every number.',
+  '/',
+);
 
 export const dynamic = 'force-dynamic';
 
@@ -60,7 +67,10 @@ export default async function HomePage() {
   return (
     <div className="space-y-12">
       <section className="space-y-3 pt-4">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+        <p className="text-sm font-semibold tracking-wide text-accent">
+          No Taxation without Visualization.
+        </p>
+        <h1 className="max-w-4xl text-3xl font-bold tracking-tight sm:text-4xl">
           Where federal money came from and went in {fyLabel(fy)}
         </h1>
         <p className="max-w-2xl text-ink/70">
@@ -70,15 +80,15 @@ export default async function HomePage() {
       </section>
 
       <section aria-label="Headline totals" className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-ink/10 bg-white p-4">
+        <div className="stat-card">
           <p className="text-sm text-ink/60">Money in (receipts)</p>
           <p className="text-3xl font-bold tabular-nums">{formatUsd(receiptsIn)}</p>
         </div>
-        <div className="rounded-lg border border-ink/10 bg-white p-4">
+        <div className="stat-card">
           <p className="text-sm text-ink/60">Money out (outlays)</p>
           <p className="text-3xl font-bold tabular-nums">{formatUsd(outlaysOut)}</p>
         </div>
-        <div className="rounded-lg border border-ink/10 bg-white p-4">
+        <div className="stat-card">
           <p className="text-sm text-ink/60">{deficit < 0 ? 'Deficit' : 'Surplus'}</p>
           <p className="text-3xl font-bold tabular-nums">{formatUsd(Math.abs(deficit))}</p>
           <p className="mt-1 text-xs text-ink/50">
@@ -86,6 +96,9 @@ export default async function HomePage() {
           </p>
         </div>
       </section>
+
+      <SourceFooter source={receiptSource} />
+      <SourceFooter source={outlaySource} />
 
       <section className="space-y-4">
         <div className="flex items-baseline justify-between gap-4">
@@ -112,6 +125,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <CategoryBarChart
+          total={outlaysOut}
           data={barData}
           ariaLabel={`Federal outlays by budget function, ${fyLabel(fy)}, top 8 plus everything else`}
         />
@@ -123,10 +137,7 @@ export default async function HomePage() {
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {SECTORS.map((s) => (
             <li key={s.slug}>
-              <Link
-                href={`/sectors/${s.slug}`}
-                className="block h-full rounded-lg border border-ink/10 bg-white p-3 hover:border-accent focus:outline-2 focus:outline-offset-2 focus:outline-accent"
-              >
+              <Link href={`/sectors/${s.slug}`} className="sector-card">
                 <span className="flex items-baseline justify-between gap-2">
                   <span className="font-medium">{s.name}</span>
                   <span className="text-sm text-ink/60 tabular-nums">
@@ -138,6 +149,7 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
+        <SourceFooter source={outlaySource} />
       </section>
     </div>
   );

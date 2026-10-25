@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/metadata';
 import Link from 'next/link';
 import DataTable from '@/components/DataTable';
 import RangeControls from '@/components/RangeControls';
@@ -13,10 +13,11 @@ import { pivotByYear, spendingSeries, toShareOfTotal, totalsMap } from '@/lib/sh
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Federal spending',
-  description: 'Federal outlays by budget function, from OMB Historical Table 3.2.',
-};
+export const metadata = pageMetadata(
+  'Federal spending',
+  'Federal outlays by budget function, from OMB Historical Table 3.2.',
+  '/federal/spending',
+);
 
 export default async function SpendingPage({
   searchParams,
@@ -42,6 +43,7 @@ export default async function SpendingPage({
     .map((p) => ({
       label: sectorByCode.get(p.categoryCode)?.name ?? p.categoryName,
       value: p.amount,
+      isProjection: p.isProjection,
     }));
   const endTotal = totals.find((t) => t.fiscalYear === to);
 
@@ -83,9 +85,11 @@ export default async function SpendingPage({
           counted against total spending. Click any sector below the chart for its story.
         </p>
         <CategoryBarChart
+          total={endTotal?.amount}
           data={barData}
           ariaLabel={`Federal outlays by budget function in ${fyLabel(to)}`}
         />
+        <SourceFooter source={source} />
       </section>
 
       <section className="space-y-2">
@@ -96,6 +100,7 @@ export default async function SpendingPage({
           Largest seven sectors; the rest fold into &ldquo;Everything else.&rdquo;
         </p>
         <StackedAreaChart
+          totals={totals}
           rows={areaRows}
           series={series}
           unit={unit}

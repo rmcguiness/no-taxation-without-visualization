@@ -1,3 +1,4 @@
+import EmptyState from '@/components/EmptyState';
 import { formatShare, formatUsd } from '@/lib/format';
 import type { SeriesDef, YearRow, ChartUnit } from '@/components/charts/chartTheme';
 
@@ -11,6 +12,7 @@ interface Props {
 /** Accessible "View data" table behind every chart (spec §6.1: charts first,
  *  dense tables available). Also the relief channel for low-contrast hues. */
 export default function DataTable({ caption, series, rows, unit }: Props) {
+  if (!rows.length) return <EmptyState />;
   const fmt = (v: number | undefined) =>
     v === undefined ? '—' : unit === 'usd' ? formatUsd(v) : formatShare(v / 100);
   return (
@@ -18,7 +20,12 @@ export default function DataTable({ caption, series, rows, unit }: Props) {
       <summary className="cursor-pointer text-sm font-medium text-accent hover:underline">
         View data
       </summary>
-      <div className="mt-2 max-h-96 overflow-auto rounded-md border border-ink/10">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={caption}
+        className="mt-2 max-h-96 overflow-auto rounded-md border border-ink/10"
+      >
         <table className="w-full min-w-max text-sm">
           <caption className="sr-only">{caption}</caption>
           <thead className="sticky top-0 bg-paper">

@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'About',
-  description: 'What No Taxation without Visualization is, and what it does and does not claim.',
-};
+export const metadata = pageMetadata(
+  'About',
+  'What No Taxation without Visualization is, and what it does and does not claim.',
+  '/about',
+);
 
 export default function AboutPage() {
   return (

@@ -12,46 +12,38 @@ import {
   YAxis,
 } from 'recharts';
 import { formatUsd } from '@/lib/format';
-import { tooltipStyle } from './chartTheme';
+import ChartTooltip from './ChartTooltip';
+import { useReducedMotion } from './useReducedMotion';
+import EmptyState from '@/components/EmptyState';
 
 export interface BarDatum {
   label: string;
   value: number;
+  isProjection?: boolean;
 }
 
 interface Props {
   data: BarDatum[]; // sorted by the caller; magnitude job → single hue
   ariaLabel: string;
   labelWidth?: number;
+  total?: number;
 }
 
 /** Wrap a label into at most `maxLines` lines given a per-line character budget,
- *  ellipsizing the final line if it still overflows. Keeps long sector names
+ *  with a generous line budget. Keeps long sector names
  *  readable on narrow screens instead of truncating to a single clipped line. */
 function wrapLabel(label: string, charsPerLine: number, maxLines: number): string[] {
-  if (label.length <= charsPerLine) return [label];
-  const words = label.split(' ');
   const lines: string[] = [];
-  let current = '';
-  for (const word of words) {
-    const candidate = current ? `${current} ${word}` : word;
-    if (candidate.length > charsPerLine && current) {
-      lines.push(current);
-      current = word;
-      if (lines.length === maxLines - 1) break;
-    } else {
-      current = candidate;
-    }
+  for (const word of label.split(' ')) {
+    const last = lines.length - 1;
+    if (last >= 0 && `${lines[last]} ${word}`.length <= charsPerLine) lines[last] += ` ${word}`;
+    else lines.push(word);
   }
-  const used = lines.join(' ').length;
-  let tail = label.slice(used).trim();
-  if (tail.length > charsPerLine) tail = `${tail.slice(0, charsPerLine - 1).trimEnd()}…`;
-  lines.push(tail);
   return lines.slice(0, maxLines);
 }
 
 /** Track the rendered width of a container element via ResizeObserver. */
-function useContainerWidth<T extends HTMLElement>() {
+function useContainerWidth<T extends HTMLElement>(hasData: boolean) {
   const ref = useRef<T>(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -63,29 +55,31 @@ function useContainerWidth<T extends HTMLElement>() {
     observer.observe(el);
     setWidth(el.clientWidth);
     return () => observer.disconnect();
-  }, []);
+  }, [hasData]);
   return { ref, width };
 }
 
-export default function CategoryBarChart({ data, ariaLabel, labelWidth = 210 }: Props) {
-  const { ref, width } = useContainerWidth<HTMLDivElement>();
+export default function CategoryBarChart({ data, ariaLabel, labelWidth = 210, total }: Props) {
+  const reducedMotion = useReducedMotion();
+  const { ref, width } = useContainerWidth<HTMLDivElement>(data.length > 0);
 
   // On narrow screens give the label column less room so the bars stay legible;
-  // wrap onto two lines and use taller rows to fit the wrapped text.
+  // wrap onto multiple lines and use taller rows to fit the wrapped text.
   const narrow = width > 0 && width < 520;
   const resolvedLabelWidth = narrow
     ? Math.max(96, Math.min(150, Math.round(width * 0.46)))
     : labelWidth;
   const fontSize = narrow ? 11 : 12;
   const rightMargin = narrow ? 46 : 64;
-  const maxLines = narrow ? 2 : 1;
+  const maxLines = 4;
   const charsPerLine = Math.max(8, Math.floor(resolvedLabelWidth / (fontSize * 0.58)));
-  const rowHeight = narrow ? 46 : 32;
+  const rowHeight = narrow ? 76 : 60;
   const height = data.length * rowHeight + 24;
 
-  // Place the value just past the bar's right edge. For negative bars that edge
-  // is the zero baseline, so the label sits in the open plot area to the right
-  // instead of colliding with the (right-aligned) category labels on the left.
+  // Place the value just past the bar's right edge. Recharts reports negative
+  // bars with a negative width anchored at the zero baseline, so the right edge
+  // is max(x, x + width): the label then sits in the open plot area to the right
+  // of the baseline instead of being drawn over the bar.
   const renderValueLabel = (props: {
     x?: string | number;
     y?: string | number;
@@ -99,7 +93,7 @@ export default function CategoryBarChart({ data, ariaLabel, labelWidth = 210 }: 
     const height = Number(props.height ?? 0);
     return (
       <text
-        x={x + width + 6}
+        x={Math.max(x, x + width) + 6}
         y={y + height / 2}
         textAnchor="start"
         dominantBaseline="central"
@@ -132,6 +126,7 @@ export default function CategoryBarChart({ data, ariaLabel, labelWidth = 210 }: 
     );
   };
 
+  if (!data.length) return <EmptyState />;
   return (
     <figure ref={ref} aria-label={ariaLabel} role="img">
       <ResponsiveContainer width="100%" height={height}>
@@ -152,8 +147,7 @@ export default function CategoryBarChart({ data, ariaLabel, labelWidth = 210 }: 
             interval={0}
           />
           <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={(value) => [formatUsd(Number(value)), 'Outlays']}
+            content={<ChartTooltip total={total} />}
             cursor={{ fill: 'var(--viz-projection-wash)' }}
           />
           <ReferenceLine x={0} stroke="var(--viz-baseline)" />
@@ -161,7 +155,9 @@ export default function CategoryBarChart({ data, ariaLabel, labelWidth = 210 }: 
             dataKey="value"
             fill="var(--viz-series-1)"
             radius={[0, 4, 4, 0]}
-            isAnimationActive={false}
+            isAnimationActive={!reducedMotion}
+            animationDuration={700}
+            animationEasing="ease-out"
           >
             <LabelList dataKey="value" content={renderValueLabel} />
           </Bar>
