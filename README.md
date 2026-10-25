@@ -4,7 +4,7 @@
 
 **Tagline:** *No Taxation without Visualization*
 
-This repository is a **product + engineering specification** for a government transparency platform. It is designed so humans and coding agents (Grok, Claude Code, Cursor, etc.) can implement the project phase by phase without losing the original vision.
+This repository contains a working government-transparency site (Next.js + Postgres, with a Python ingest pipeline for official federal budget data) and the product and engineering specs that guide it. Phase 1 (federal revenue, spending and sector views from OMB historical tables) is live; later phases are planned in the docs. The specs are written so contributors, human or AI-assisted, can build the next phases without losing the original vision.
 
 ---
 
@@ -48,7 +48,7 @@ docker compose up   # start Postgres 16 (defaults in .env.example)
 ```
 
 Optional: copy `.env.example` to `.env` to override Postgres credentials/port.
-The Python ingest package lives in [ingest/](./ingest/) (skeleton only until Phase 1).
+The Python ingest package lives in [ingest/](./ingest/): it fetches the official OMB tables, validates them and loads them into Postgres (`cd ingest && pip install -e '.[dev]' && ntwv-ingest run`). The local Postgres port is bound to `127.0.0.1` only.
 
 ---
 
@@ -82,6 +82,16 @@ same rows; a new vintage supersedes the old via the `fiscal_series_latest` view.
 
 ---
 
+## Contributing
+
+Issues and pull requests are welcome. Please read [AGENTS.md](./AGENTS.md) and the docs above first, keep claims within the policy in [docs/PRODUCT_SPEC.md](./docs/PRODUCT_SPEC.md), and make sure CI passes (`pnpm format:check && pnpm lint && pnpm typecheck && pnpm test`, plus `pytest` in `ingest/`). Never commit secrets or real database URLs; use `.env` (git-ignored) based on `.env.example`.
+
+## Security
+
+Please report vulnerabilities privately; see [SECURITY.md](./SECURITY.md).
+
 ## License / non-affiliation
 
-Not affiliated with any government agency. Uses public open data. See PRODUCT_SPEC for language about what the product can and cannot claim.
+Code is released under the [MIT License](./LICENSE) © 2026 Ryan McGuiness. The underlying data comes from U.S. federal government sources (OMB, CBO, Treasury, USAspending) and is public domain; see [docs/DATA_SOURCES.md](./docs/DATA_SOURCES.md).
+
+Not affiliated with any government agency. See PRODUCT_SPEC for language about what the product can and cannot claim.
