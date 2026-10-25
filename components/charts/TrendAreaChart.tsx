@@ -12,7 +12,10 @@ import {
   YAxis,
 } from 'recharts';
 import { formatUsd } from '@/lib/format';
-import { axisTick, tooltipStyle, type ChartUnit } from './chartTheme';
+import ChartTooltip from './ChartTooltip';
+import { useReducedMotion } from './useReducedMotion';
+import EmptyState from '@/components/EmptyState';
+import { axisTick, type ChartUnit } from './chartTheme';
 
 interface Props {
   rows: Array<{ year: number; value: number; isProjection: boolean }>;
@@ -20,6 +23,7 @@ interface Props {
   ariaLabel: string;
   seriesLabel: string;
   height?: number;
+  totals?: Array<{ fiscalYear: number; amount: number }>;
 }
 
 export default function TrendAreaChart({
@@ -28,17 +32,21 @@ export default function TrendAreaChart({
   ariaLabel,
   seriesLabel,
   height = 300,
+  totals,
 }: Props) {
+  const reducedMotion = useReducedMotion();
+  const totalByYear = new Map(totals?.map((t) => [t.fiscalYear, t.amount]));
+  const data = rows.map((r) => ({ ...r, total: totalByYear.get(r.year) }));
   const projectionFrom = rows.find((r) => r.isProjection)?.year;
   const lastYear = rows.at(-1)?.year;
   const hasNegative = rows.some((r) => r.value < 0);
-  const fmt = (v: number) => (unit === 'usd' ? formatUsd(v) : `${v.toFixed(1)}%`);
 
+  if (!rows.length) return <EmptyState />;
   return (
     <figure aria-label={ariaLabel} role="img">
       <ResponsiveContainer width="100%" height={height}>
-        <AreaChart data={rows} margin={{ top: 8, right: 8, bottom: 0, left: 4 }}>
-          <CartesianGrid stroke="var(--viz-grid)" vertical={false} />
+        <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 4 }}>
+          <CartesianGrid stroke="var(--viz-grid)" strokeDasharray="3 5" vertical={false} />
           <XAxis
             dataKey="year"
             tick={axisTick}
@@ -53,11 +61,7 @@ export default function TrendAreaChart({
             axisLine={false}
             width={56}
           />
-          <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={(value) => [fmt(Number(value)), seriesLabel]}
-            labelFormatter={(year) => `FY${year}`}
-          />
+          <Tooltip content={<ChartTooltip unit={unit} />} />
           {projectionFrom !== undefined && lastYear !== undefined && (
             <ReferenceArea
               x1={projectionFrom}
@@ -74,7 +78,9 @@ export default function TrendAreaChart({
             strokeWidth={2}
             fill="var(--viz-series-1)"
             fillOpacity={0.18}
-            isAnimationActive={false}
+            isAnimationActive={!reducedMotion}
+            animationDuration={700}
+            animationEasing="ease-out"
           />
         </AreaChart>
       </ResponsiveContainer>

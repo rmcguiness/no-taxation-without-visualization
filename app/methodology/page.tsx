@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Methodology',
-  description: 'Data sources, transforms, and confidence levels behind every number.',
-};
+export const metadata = pageMetadata(
+  'Methodology',
+  'Data sources, transforms, and confidence levels behind every number.',
+  '/methodology',
+);
 
 const sources = [
   {

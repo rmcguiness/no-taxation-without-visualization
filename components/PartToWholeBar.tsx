@@ -1,3 +1,4 @@
+import EmptyState from '@/components/EmptyState';
 import { formatShare, formatUsd } from '@/lib/format';
 
 export interface Segment {
@@ -19,6 +20,7 @@ export default function PartToWholeBar({
   ariaLabel: string;
 }) {
   const total = segments.reduce((sum, s) => sum + s.value, 0);
+  if (!segments.length || total === 0) return <EmptyState />;
   return (
     <figure aria-label={ariaLabel}>
       <div className="flex h-9 w-full gap-0.5 overflow-hidden rounded-md" role="img" aria-hidden>
@@ -32,7 +34,7 @@ export default function PartToWholeBar({
       </div>
       <figcaption className="mt-3 grid gap-1.5 text-sm sm:grid-cols-2">
         {segments.map((s) => (
-          <span key={s.label} className="inline-flex items-baseline gap-1.5">
+          <span key={s.label} className="inline-flex flex-wrap items-baseline gap-1.5">
             <span
               aria-hidden
               className="inline-block h-2.5 w-2.5 shrink-0 self-center rounded-sm"

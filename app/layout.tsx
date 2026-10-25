@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { BRAND, SITE_NAME, SITE_TAGLINE, siteUrl } from '@/lib/site';
+import NavLinks from '@/components/NavLinks';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -37,44 +38,61 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: BRAND.paper,
-  colorScheme: 'light',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: BRAND.paper },
+    { media: '(prefers-color-scheme: dark)', color: '#101b20' },
+  ],
+  colorScheme: 'light dark',
 };
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/federal/revenue', label: 'Revenue' },
-  { href: '/federal/spending', label: 'Spending' },
-  { href: '/about', label: 'About' },
-  { href: '/methodology', label: 'Methodology' },
-];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col antialiased">
-        <header className="border-b border-ink/10">
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
+        <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/90 backdrop-blur-xl">
           <nav
             aria-label="Main navigation"
-            className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-4"
+            className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 px-5 py-3"
           >
-            <Link href="/" className="font-semibold tracking-tight hover:text-accent">
-              NTwV
+            <Link
+              href="/"
+              aria-label="No Taxation without Visualization home"
+              className="py-2 text-lg font-bold tracking-tight"
+            >
+              No Taxation <span className="text-accent">/</span>
+              <span className="block text-xs font-normal tracking-wide text-muted">
+                without Visualization
+              </span>
             </Link>
-            <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-              {navLinks.map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} className="hover:text-accent hover:underline">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <NavLinks />
           </nav>
         </header>
-        <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">{children}</main>
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:py-16"
+        >
+          {children}
+        </main>
         <footer className="border-t border-ink/10">
-          <div className="mx-auto max-w-4xl px-4 py-6 text-sm text-ink/70">
+          <div className="mx-auto max-w-6xl px-5 py-10 text-sm text-ink/70">
+            <nav aria-label="Footer navigation" className="mb-6 flex flex-wrap gap-5 text-accent">
+              <Link href="/">Home</Link>
+              <Link href="/federal/revenue">Revenue</Link>
+              <Link href="/federal/spending">Spending</Link>
+              <Link href="/about">About</Link>
+              <Link href="/methodology">Methodology</Link>
+              <a href="https://github.com/rmcguiness/no-taxation-without-visualization">GitHub ↗</a>
+            </nav>
+            <p className="mb-4">
+              Source: Office of Management and Budget ·{' '}
+              <Link href="/methodology" className="text-accent underline">
+                Historical Tables &amp; methods
+              </Link>
+            </p>
             <p>
               Public data for civic understanding. Balanced books do not prove absence of fraud.
               Gaps may mean missing data, not theft.

@@ -15,8 +15,8 @@ export default function SourceFooter({ source }: { source: SourceMeta }) {
       <a href={source.homepageUrl} className="underline hover:text-accent">
         {source.name}
       </a>
-      , {source.publisher}. Retrieved {source.asOf}. Federal fiscal years (ending Sep 30); nominal
-      dollars.{' '}
+      , {source.publisher} ({source.id}). Retrieved {source.asOf}. Federal fiscal years (ending Sep
+      30); nominal dollars.{' '}
       <span
         className={`ml-1 rounded-sm px-1.5 py-0.5 font-medium ${
           CONFIDENCE_STYLE[source.confidence] ?? CONFIDENCE_STYLE.incomplete

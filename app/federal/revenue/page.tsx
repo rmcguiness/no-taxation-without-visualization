@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/metadata';
 import DataTable from '@/components/DataTable';
 import RangeControls from '@/components/RangeControls';
 import SourceFooter from '@/components/SourceFooter';
@@ -15,10 +15,11 @@ import { pivotByYear, RECEIPT_SERIES, toShareOfTotal, totalsMap } from '@/lib/sh
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Federal revenue',
-  description: 'Federal receipts by source, from OMB Historical Table 2.1.',
-};
+export const metadata = pageMetadata(
+  'Federal revenue',
+  'Federal receipts by source, from OMB Historical Table 2.1.',
+  '/federal/revenue',
+);
 
 export default async function RevenuePage({
   searchParams,
@@ -66,6 +67,7 @@ export default async function RevenuePage({
 
       <section className="space-y-2">
         <StackedAreaChart
+          totals={totals}
           rows={rows}
           series={RECEIPT_SERIES}
           unit={unit}

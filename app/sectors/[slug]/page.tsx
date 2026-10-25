@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { pageMetadata } from '@/lib/metadata';
 import { notFound } from 'next/navigation';
 import DataTable from '@/components/DataTable';
 import RangeControls from '@/components/RangeControls';
@@ -20,7 +21,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const sector = sectorBySlug.get((await params).slug);
   return sector
-    ? { title: sector.name, description: sector.description }
+    ? pageMetadata(sector.name, sector.description, `/sectors/${sector.slug}`)
     : { title: 'Sector not found' };
 }
 
@@ -122,6 +123,7 @@ export default async function SectorPage({ params, searchParams }: PageProps) {
 
       <section className="space-y-2">
         <TrendAreaChart
+          totals={totals}
           rows={rows}
           unit={unit}
           seriesLabel={sector.name}

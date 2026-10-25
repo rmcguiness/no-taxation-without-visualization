@@ -15,14 +15,6 @@ export const OTHER_VAR = 'var(--viz-other)';
 
 export const axisTick = { fill: 'var(--viz-muted)', fontSize: 12 } as const;
 
-export const tooltipStyle = {
-  backgroundColor: 'var(--viz-surface)',
-  border: '1px solid var(--viz-grid)',
-  borderRadius: '6px',
-  fontSize: '13px',
-  color: 'var(--viz-ink)',
-} as const;
-
 export type ChartUnit = 'usd' | 'share';
 
 export interface SeriesDef {

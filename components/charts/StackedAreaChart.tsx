@@ -11,7 +11,10 @@ import {
   YAxis,
 } from 'recharts';
 import { formatUsd } from '@/lib/format';
-import { axisTick, tooltipStyle, type ChartUnit, type SeriesDef, type YearRow } from './chartTheme';
+import ChartTooltip from './ChartTooltip';
+import { useReducedMotion } from './useReducedMotion';
+import EmptyState from '@/components/EmptyState';
+import { axisTick, type ChartUnit, type SeriesDef, type YearRow } from './chartTheme';
 
 interface Props {
   rows: YearRow[];
@@ -19,27 +22,38 @@ interface Props {
   unit: ChartUnit;
   ariaLabel: string;
   height?: number;
+  totals?: Array<{ fiscalYear: number; amount: number }>;
 }
 
 function tickValue(unit: ChartUnit) {
   return (v: number) => (unit === 'usd' ? formatUsd(v) : `${Math.round(v)}%`);
 }
 
-function tooltipValue(unit: ChartUnit) {
-  return (v: number | string) =>
-    unit === 'usd' ? formatUsd(Number(v)) : `${Number(v).toFixed(1)}%`;
-}
-
-export default function StackedAreaChart({ rows, series, unit, ariaLabel, height = 340 }: Props) {
-  const data = rows.map((r) => ({ year: r.year, ...r.values }));
+export default function StackedAreaChart({
+  rows,
+  series,
+  unit,
+  ariaLabel,
+  height = 340,
+  totals,
+}: Props) {
+  const totalByYear = new Map(totals?.map((t) => [t.fiscalYear, t.amount]));
+  const data = rows.map((r) => ({
+    year: r.year,
+    ...r.values,
+    total: totalByYear.get(r.year),
+    isProjection: r.isProjection,
+  }));
+  const reducedMotion = useReducedMotion();
   const projectionFrom = rows.find((r) => r.isProjection)?.year;
   const lastYear = rows.at(-1)?.year;
 
+  if (!rows.length) return <EmptyState />;
   return (
     <figure aria-label={ariaLabel} role="img">
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 4 }}>
-          <CartesianGrid stroke="var(--viz-grid)" vertical={false} />
+          <CartesianGrid stroke="var(--viz-grid)" strokeDasharray="3 5" vertical={false} />
           <XAxis
             dataKey="year"
             tick={axisTick}
@@ -56,12 +70,7 @@ export default function StackedAreaChart({ rows, series, unit, ariaLabel, height
             domain={unit === 'share' ? [0, 100] : [0, 'auto']}
             ticks={unit === 'share' ? [0, 25, 50, 75, 100] : undefined}
           />
-          <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={(value, name) => [tooltipValue(unit)(value as number), name as string]}
-            labelFormatter={(year) => `FY${year}`}
-            itemSorter={() => -1}
-          />
+          <Tooltip content={<ChartTooltip unit={unit} />} />
           {projectionFrom !== undefined && lastYear !== undefined && (
             <ReferenceArea
               x1={projectionFrom}
@@ -80,7 +89,9 @@ export default function StackedAreaChart({ rows, series, unit, ariaLabel, height
               strokeWidth={1}
               fill={s.color}
               fillOpacity={1}
-              isAnimationActive={false}
+              isAnimationActive={!reducedMotion}
+              animationDuration={700}
+              animationEasing="ease-out"
             />
           ))}
         </AreaChart>

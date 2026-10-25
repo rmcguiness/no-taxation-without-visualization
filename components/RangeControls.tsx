@@ -51,7 +51,7 @@ export default function RangeControls({
   );
 
   return (
-    <div className="flex flex-wrap items-end gap-4">
+    <div className="flex flex-wrap items-end gap-4 rounded-lg border border-ink/10 bg-surface p-4">
       <label className="flex flex-col gap-1 text-sm">
         <span className="text-ink/70">From</span>
         <select
@@ -81,7 +81,7 @@ export default function RangeControls({
         </select>
       </label>
       {showUnit && (
-        <div role="group" aria-label="Unit" className="flex gap-2">
+        <div role="group" aria-label="Unit" className="flex flex-wrap gap-2">
           {unitButton('usd', 'Dollars')}
           {unitButton('share', shareLabel)}
         </div>
