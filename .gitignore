@@ -46,3 +46,18 @@ coverage/
 
 # Docker volumes
 postgres-data/
+
+# More env / secret safety nets
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.crt
+# Local databases and dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+.vercel/
