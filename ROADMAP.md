@@ -16,13 +16,14 @@ the short version. Contributions are welcome on anything under **Next**.
   footer with as-of date on every chart, About and Methodology pages.
 - **Security baseline:** patched Next.js, CI (format, lint, typecheck, tests, build,
   ingest tests), dependency review, gitleaks, Dependabot, `SECURITY.md`.
+- **Design polish (Phase 2 design pass, #13, merged Oct 25 2026):** design tokens,
+  light/dark themes, refined charts with reduced-motion-aware animation, custom
+  tooltips, loading/empty states, accessibility pass, per-page metadata, sitemap and
+  robots.
 
 ## In progress
 
-- **Design polish (Phase 2 design pass):** design tokens, light/dark themes, refined
-  charts with reduced-motion-aware animation, custom tooltips, loading/empty states,
-  accessibility pass, per-page metadata, sitemap and robots. Under review in a pull
-  request; not yet merged.
+- Nothing at the moment.
 
 ## Next
 
